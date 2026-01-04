@@ -19,7 +19,7 @@ export default async function BlogsPage() {
     summary: b.description,
     banner_image: b.banner_image,
     content: b.content,
-    type: (b as any).type,        // assuming you added a "type" column
+    type: b.type,        // assuming you added a "type" column
     created_at: b.created_at,
   }));
 
