@@ -20,7 +20,7 @@ type Blog = {
   // Add other fields from your 'blogs' table as needed
 };
 
-export default function BlogPage({ params }: { params: { id: string } }) {
+export default async function BlogPage({ params }: { params: { id: string } }) {
   const [blog, setBlog] = useState<Blog | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
