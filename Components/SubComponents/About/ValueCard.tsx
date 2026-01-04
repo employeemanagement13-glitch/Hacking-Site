@@ -38,7 +38,6 @@ const ValueCard: React.FC<ValueCardProps> = ({
         viewport={{ once: true }}
         transition={{ duration: 0.4, delay: 0.2 + (index * 0.1) }}
         className="text-sm sm:text-[16px] text-[#A9A9A9]"
-        {/* text-base text-gray-300 */}
       >
         {description}
       </motion.p>
