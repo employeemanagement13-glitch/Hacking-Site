@@ -138,7 +138,7 @@ export default function PublicationsListClient({ initialPublications }: Props) {
         <SectionHeader title="Publications" className="" subtitle="" subtitleClassName="" />
         
         {/* Real-time connection indicator */}
-        <motion.div
+        {/* <motion.div
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
           className="flex items-center gap-2"
@@ -147,7 +147,7 @@ export default function PublicationsListClient({ initialPublications }: Props) {
           <span className="text-xs text-neutral-400">
             {isConnected ? 'Live updates enabled' : 'Connecting...'}
           </span>
-        </motion.div>
+        </motion.div> */}
       </div>
       
       {/* Animated Search Bar */}
