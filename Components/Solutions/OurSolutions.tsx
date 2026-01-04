@@ -43,7 +43,7 @@ const OurSolutions: React.FC = () => {
       <div className="max-w-7xl mx-auto">
         
         {/* Title */}
-        <SectionHeader title='Our Solutions' className=' pb-10' subtitleClassName='' />
+        <SectionHeader title='Our Solutions' className='text-white pb-10' subtitleClassName='' />
 
         {/* Solutions Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 min-h-fit"> 
