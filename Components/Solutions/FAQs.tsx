@@ -21,7 +21,7 @@ const FAQSection: React.FC = () => {
     <section className="py-16 sm:py-20 lg:py-24 px-4 sm:px-6 lg:px-8 font-sans">
       <div className="max-w-4xl mx-auto">
         {/* Section Header */}
-        <SectionHeader title="FAQ's" className="pb-8 sm:pb-10" subtitleClassName='' />
+        <SectionHeader title="FAQ's" className="text-white pb-8 sm:pb-10" subtitleClassName='' />
 
         {/* FAQ List */}
         <div className="mt-6 sm:mt-8">
