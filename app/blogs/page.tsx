@@ -1,8 +1,9 @@
 // app/blogs/page.tsx
-import { supabase } from "@/utils/supabaseClient";  // adjust your path
+import { supabase } from "@/utils/supabaseClient";
 import BlogListClient from "@/Components/blogs/BlogListClient";
 
 export default async function BlogsPage() {
+  // Initial server-side fetch
   const { data: blogs, error } = await supabase
     .from("blogs")
     .select("id, title, description, banner_image, content, type, created_at")
@@ -19,7 +20,7 @@ export default async function BlogsPage() {
     summary: b.description,
     banner_image: b.banner_image,
     content: b.content,
-    type: b.type,        // assuming you added a "type" column
+    type: b.type,
     created_at: b.created_at,
   }));
 
