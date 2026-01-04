@@ -41,7 +41,7 @@ const OurMethodology: React.FC = () => {
       <div className="max-w-4xl mx-auto">
         
         {/* Section Header */}
-        <SectionHeader title='Our Methodology' subtitle='' className=' pb-10' subtitleClassName=''/>
+        <SectionHeader title='Our Methodology' subtitle='' className='text-white pb-10' subtitleClassName=''/>
 
         {/* Cards Stack */}
         <div className="flex flex-col space-y-8 min-h-fit"> 
