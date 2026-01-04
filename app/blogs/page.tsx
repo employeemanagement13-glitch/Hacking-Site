@@ -5,7 +5,7 @@ import BlogListClient from "@/Components/blogs/BlogListClient";
 export default async function BlogsPage() {
   const { data: blogs, error } = await supabase
     .from("blogs")
-    .select("*")
+    .select("id, title, description, banner_image, content, type, created_at")
     .order("created_at", { ascending: false });
 
   if (error) {
