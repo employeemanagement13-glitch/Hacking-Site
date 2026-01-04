@@ -140,11 +140,11 @@ export default function BlogListClient({ initialBlogs }: { initialBlogs: BlogIte
       transition={{ duration: 0.5 }}
       className="w-[80vw] max-md:w-full mx-auto mt-20"
     >
-      <div className="flex justify-between items-center mb-6">
+      <div className="flex justify-center items-center mb-6">
         <SectionHeader title="Blogs" className="" subtitle="" subtitleClassName="" />
         
         {/* Real-time connection indicator */}
-        <motion.div
+        {/* <motion.div
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
           className="flex items-center gap-2"
@@ -153,7 +153,7 @@ export default function BlogListClient({ initialBlogs }: { initialBlogs: BlogIte
           <span className="text-xs text-neutral-400">
             {isConnected ? 'Live updates enabled' : 'Connecting...'}
           </span>
-        </motion.div>
+        </motion.div> */}
       </div>
 
       {/* Search bar */}
