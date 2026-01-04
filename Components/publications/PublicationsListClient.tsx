@@ -134,7 +134,7 @@ export default function PublicationsListClient({ initialPublications }: Props) {
       transition={{ duration: 0.5 }}
       className="w-[80vw] mx-auto mt-20"
     >
-      <div className="flex justify-between items-center mb-6">
+      <div className="flex justify-center items-center mb-6">
         <SectionHeader title="Publications" className="" subtitle="" subtitleClassName="" />
         
         {/* Real-time connection indicator */}
