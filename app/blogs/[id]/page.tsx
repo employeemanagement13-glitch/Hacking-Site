@@ -20,22 +20,41 @@ type Blog = {
   // Add other fields from your 'blogs' table as needed
 };
 
-export default async function BlogPage({ params }: { params: { id: string } }) {
+export default function BlogPage({ params }: { params: Promise<{ id: string }> }) {
   const [blog, setBlog] = useState<Blog | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const { id } = await params; // params is now available directly in client components
+  const [blogId, setBlogId] = useState<string | null>(null);
 
-  // 1. Initial fetch and real-time subscription
+  // Extract the ID from params
   useEffect(() => {
+    const extractId = async () => {
+      try {
+        const { id } = await params;
+        setBlogId(id);
+      } catch (err) {
+        console.error("Error extracting params:", err);
+        setError("Invalid blog ID");
+        setLoading(false);
+      }
+    };
+    
+    extractId();
+  }, [params]);
+
+  // Fetch blog and set up real-time subscription when blogId is available
+  useEffect(() => {
+    if (!blogId) return; // Don't run until we have the ID
+
     let mounted = true;
+    let channel: any = null;
 
     const fetchBlogAndSubscribe = async () => {
       // Initial fetch
       const { data, error: fetchError } = await supabase
         .from("blogs")
         .select("*")
-        .eq("id", id)
+        .eq("id", blogId)
         .single();
 
       if (!mounted) return;
@@ -49,16 +68,16 @@ export default async function BlogPage({ params }: { params: { id: string } }) {
       setBlog(data);
       setLoading(false);
 
-      // 2. Set up real-time subscription for THIS specific blog
-      const channel = supabase
-        .channel(`blog-${id}-changes`) // Unique channel name per blog
+      // Set up real-time subscription for THIS specific blog
+      channel = supabase
+        .channel(`blog-${blogId}-changes`) // Unique channel name per blog
         .on(
           'postgres_changes',
           {
             event: 'UPDATE', // Only listen for updates
             schema: 'public',
             table: 'blogs',
-            filter: `id=eq.${id}` // CRITICAL: Filter for only this blog ID
+            filter: `id=eq.${blogId}` // CRITICAL: Filter for only this blog ID
           },
           (payload: RealtimePostgresChangesPayload<Blog>) => {
             console.log('Blog updated in real-time:', payload);
@@ -67,18 +86,20 @@ export default async function BlogPage({ params }: { params: { id: string } }) {
           }
         )
         .subscribe((status) => {
-          console.log(`Subscription status for blog ${id}:`, status);
+          console.log(`Subscription status for blog ${blogId}:`, status);
         });
-
-      // Cleanup function
-      return () => {
-        mounted = false;
-        supabase.removeChannel(channel);
-      };
     };
 
     fetchBlogAndSubscribe();
-  }, [id]); // Re-run if the ID changes
+
+    // Cleanup function
+    return () => {
+      mounted = false;
+      if (channel) {
+        supabase.removeChannel(channel);
+      }
+    };
+  }, [blogId]); // Re-run when blogId changes
 
   if (loading) {
     return <div className="p-6 text-white mt-28 text-center">Loading blog...</div>;
