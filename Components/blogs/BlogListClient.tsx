@@ -141,7 +141,7 @@ export default function BlogListClient({ initialBlogs }: { initialBlogs: BlogIte
       className="w-[80vw] max-md:w-full mx-auto mt-20"
     >
       <div className="flex justify-center items-center mb-6">
-        <SectionHeader title="Blogs" className="" subtitle="" subtitleClassName="" />
+        <SectionHeader title="Blogs" className="text-white" subtitle="" subtitleClassName="" />
         
         {/* Real-time connection indicator */}
         {/* <motion.div
