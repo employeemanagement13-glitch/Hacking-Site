@@ -5,7 +5,7 @@ import PublicationsListClient from "@/Components/publications/PublicationsListCl
 export default async function PublicationsPage() {
   const { data: pubs, error } = await supabase
     .from("publications")
-    .select("id, title, description, banner_image, file_path, created_at")
+    .select("*")
     .order("created_at", { ascending: false });
 
   if (error) {
