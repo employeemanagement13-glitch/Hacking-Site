@@ -1,13 +1,14 @@
-// components/PublicationsListClient.tsx
 "use client";
 
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import BlogCard from "../SubComponents/home/BlogCard";
 import Pagination from "../SubComponents/Solutions/Pagination";
 import SectionHeader from "../SubComponents/SectionHeader";
 import LoadingCardPlaceholder from "../SubComponents/home/LoadingPlaceholder";
 import { Search } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { supabase } from "@/utils/supabaseClient";
+import type { RealtimePostgresChangesPayload } from '@supabase/supabase-js';
 
 export type PublicationItem = {
   id: string;
@@ -29,14 +30,86 @@ export default function PublicationsListClient({ initialPublications }: Props) {
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [loadingPage, setLoadingPage] = useState<boolean>(false);
   const [isSearchFocused, setIsSearchFocused] = useState(false);
+  const [publications, setPublications] = useState<PublicationItem[]>(initialPublications);
+  const [isConnected, setIsConnected] = useState(false);
+
+  // Set up real-time subscription
+  useEffect(() => {
+    let mounted = true;
+    
+    const setupRealtime = async () => {
+      try {
+        // Subscribe to real-time changes
+        const channel = supabase
+          .channel('publications-realtime')
+          .on(
+            'postgres_changes',
+            {
+              event: '*', // Listen to INSERT, UPDATE, DELETE
+              schema: 'public',
+              table: 'publications'
+            },
+            async (payload: RealtimePostgresChangesPayload<PublicationItem>) => {
+              if (!mounted) return;
+              
+              console.log('Real-time update received:', payload.eventType);
+              
+              // Fetch fresh data when changes occur
+              const { data: freshPubs, error } = await supabase
+                .from("publications")
+                .select("*")
+                .order("created_at", { ascending: false });
+              
+              if (error) {
+                console.error('Error fetching fresh publications:', error);
+                return;
+              }
+              
+              if (freshPubs && mounted) {
+                const mapped = freshPubs.map(p => ({
+                  id: p.id,
+                  title: p.title,
+                  summary: p.description,
+                  banner_image: p.banner_image,
+                  file_path: p.file_path,
+                  created_at: p.created_at,
+                }));
+                setPublications(mapped);
+              }
+            }
+          )
+          .subscribe((status) => {
+            if (mounted) {
+              setIsConnected(status === 'SUBSCRIBED');
+              console.log('Realtime subscription status:', status);
+            }
+          });
+        
+        // Cleanup function
+        return () => {
+          mounted = false;
+          supabase.removeChannel(channel);
+        };
+      } catch (error) {
+        console.error('Error setting up real-time:', error);
+      }
+    };
+    
+    setupRealtime();
+    
+    // Optional: Clean up on unmount
+    return () => {
+      mounted = false;
+    };
+  }, []);
 
   const filtered = useMemo(() => {
-    return initialPublications.filter(pub => {
+    return publications.filter(pub => {
       const q = searchTerm.toLowerCase();
       return pub.title.toLowerCase().includes(q) ||
              pub.summary.toLowerCase().includes(q);
     });
-  }, [initialPublications, searchTerm]);
+  }, [publications, searchTerm]);
 
   const totalPages = Math.ceil(filtered.length / ITEMS_PER_PAGE);
 
@@ -61,7 +134,21 @@ export default function PublicationsListClient({ initialPublications }: Props) {
       transition={{ duration: 0.5 }}
       className="w-[80vw] mx-auto mt-20"
     >
-      <SectionHeader title="Publications" className="" subtitle="" subtitleClassName="" />
+      <div className="flex justify-between items-center mb-6">
+        <SectionHeader title="Publications" className="" subtitle="" subtitleClassName="" />
+        
+        {/* Real-time connection indicator */}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="flex items-center gap-2"
+        >
+          <div className={`w-2 h-2 rounded-full ${isConnected ? 'bg-green-500 animate-pulse' : 'bg-red-500'}`} />
+          <span className="text-xs text-neutral-400">
+            {isConnected ? 'Live updates enabled' : 'Connecting...'}
+          </span>
+        </motion.div>
+      </div>
       
       {/* Animated Search Bar */}
       <motion.div
@@ -69,7 +156,6 @@ export default function PublicationsListClient({ initialPublications }: Props) {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3, delay: 0.1 }}
         whileHover={{ scale: 1.01 }}
-        // transition={{ duration: 0.2 }}
         className="searchparent mb-4 min-w-full"
       >
         <motion.div
@@ -93,8 +179,16 @@ export default function PublicationsListClient({ initialPublications }: Props) {
           animate={{ opacity: 1 }}
           transition={{ duration: 0.3, delay: 0.2 }}
           whileFocus={{ scale: 1.006 }}
-          // transition={{ duration: 0.2 }}
         />
+      </motion.div>
+
+      {/* Publication count */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        className="text-sm text-neutral-400 mb-4"
+      >
+        Showing {Math.min(filtered.length, ITEMS_PER_PAGE)} of {filtered.length} publication{filtered.length !== 1 ? 's' : ''}
       </motion.div>
 
       {/* Listing / loading / empty state with animations */}
