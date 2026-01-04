@@ -26,7 +26,7 @@ const ValueCard: React.FC<ValueCardProps> = ({
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
         transition={{ duration: 0.4, delay: 0.1 + (index * 0.1) }}
-        className="text-2xl font-semibold text-white mb-4 line-clamp-2"
+        className="text-lg sm:text-[22px] md:text-[28px] font-semibold text-white mb-4"
       >
         {title}
       </motion.h3>
@@ -37,7 +37,8 @@ const ValueCard: React.FC<ValueCardProps> = ({
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
         transition={{ duration: 0.4, delay: 0.2 + (index * 0.1) }}
-        className="text-base text-gray-300"
+        className="text-sm sm:text-[16px] text-[#A9A9A9]"
+        {/* text-base text-gray-300 */}
       >
         {description}
       </motion.p>
