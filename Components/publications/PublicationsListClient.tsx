@@ -135,7 +135,7 @@ export default function PublicationsListClient({ initialPublications }: Props) {
       className="w-[80vw] mx-auto mt-20"
     >
       <div className="flex justify-center items-center mb-6">
-        <SectionHeader title="Publications" className="" subtitle="" subtitleClassName="" />
+        <SectionHeader title="Publications" className="text-white" subtitle="" subtitleClassName="" />
         
         {/* Real-time connection indicator */}
         {/* <motion.div
