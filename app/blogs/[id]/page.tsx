@@ -24,7 +24,7 @@ export default function BlogPage({ params }: { params: { id: string } }) {
   const [blog, setBlog] = useState<Blog | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const { id } = params; // params is now available directly in client components
+  const { id } = await params; // params is now available directly in client components
 
   // 1. Initial fetch and real-time subscription
   useEffect(() => {
